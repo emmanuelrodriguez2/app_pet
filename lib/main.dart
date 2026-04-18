@@ -2,6 +2,7 @@ import 'package:app_pet/presentation/home/home_screen.dart';
 import 'package:app_pet/presentation/home/provider/home_provider.dart';
 import 'package:app_pet/presentation/login/login_screen.dart';
 import 'package:app_pet/presentation/nutrition/nutrition_screen.dart';
+import 'package:app_pet/presentation/profile/profile_screen.dart';
 import 'package:app_pet/presentation/splash/splash_screen.dart';
 import 'package:app_pet/presentation/sync/sync_screen.dart';
 import 'package:app_pet/presentation/vision/vision_screen.dart';
@@ -29,6 +30,7 @@ class MainApp extends StatelessWidget {
           NutritionScreen.routeName: (_) => const NutritionScreen(),
           VisionScreen.routeName: (_) => const VisionScreen(),
           SyncScreen.routeName: (_) => const SyncScreen(),
+          ProfileScreen.routeName: (_) => const ProfileScreen(),
         },
       ),
     );

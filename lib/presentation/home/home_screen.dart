@@ -1,9 +1,12 @@
 import 'dart:ui';
 
 import 'package:app_pet/presentation/nutrition/nutrition_screen.dart';
+import 'package:app_pet/presentation/profile/profile_screen.dart';
 import 'package:app_pet/presentation/sync/sync_screen.dart';
 import 'package:app_pet/presentation/vision/vision_screen.dart';
 import 'package:flutter/material.dart';
+
+enum HomeAction { home, vision, nutrition, sync, profile, quickDispense }
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,26 +20,43 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static const _background = Color(0xFFFBF9F4);
 
-  void _openRoute(String route) {
+  void _handleAction(HomeAction action) {
     if (!mounted) return;
-    Navigator.pushNamed(context, route);
+    switch (action) {
+      case HomeAction.home:
+        break;
+      case HomeAction.vision:
+        Navigator.pushNamed(context, VisionScreen.routeName);
+        break;
+      case HomeAction.nutrition:
+        Navigator.pushNamed(context, NutritionScreen.routeName);
+        break;
+      case HomeAction.sync:
+        Navigator.pushNamed(context, SyncScreen.routeName);
+        break;
+      case HomeAction.profile:
+        Navigator.pushNamed(context, ProfileScreen.routeName);
+        break;
+      case HomeAction.quickDispense:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const SyncScreen(runQuickDispense: true),
+          ),
+        );
+        break;
+    }
   }
 
   void _onBottomTap(int index) {
     setState(() => selectedBottomIndex = index);
-    switch (index) {
-      case 0:
-        break;
-      case 1:
-        _openRoute(VisionScreen.routeName);
-        break;
-      case 2:
-        _openRoute(NutritionScreen.routeName);
-        break;
-      case 3:
-        _openRoute(SyncScreen.routeName);
-        break;
-    }
+    final actions = [
+      HomeAction.home,
+      HomeAction.vision,
+      HomeAction.nutrition,
+      HomeAction.sync,
+    ];
+    _handleAction(actions[index]);
   }
 
   @override
@@ -56,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Icon(
                 Icons.pets,
                 size: 300,
-                color: const Color(0xFF1B1C19).withOpacity(0.04),
+                color: const Color(0xFF1B1C19).withValues(alpha: 0.04),
               ),
             ),
           ),
@@ -64,19 +84,15 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               _TopBar(
                 isTablet: isTablet,
-                onTapHome: () {},
-                onTapVision: () => _openRoute(VisionScreen.routeName),
-                onTapNutrition: () => _openRoute(NutritionScreen.routeName),
-                onTapSync: () => _openRoute(SyncScreen.routeName),
+                onTapHome: () => _handleAction(HomeAction.home),
+                onTapVision: () => _handleAction(HomeAction.vision),
+                onTapNutrition: () => _handleAction(HomeAction.nutrition),
+                onTapSync: () => _handleAction(HomeAction.sync),
+                onTapProfile: () => _handleAction(HomeAction.profile),
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(
-                    24,
-                    28,
-                    24,
-                    isTablet ? 24 : 120,
-                  ),
+                  padding: EdgeInsets.fromLTRB(24, 28, 24, isTablet ? 24 : 120),
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 1200),
@@ -88,9 +104,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           _FeatureGrid(
                             isDesktop: isDesktop,
                             isTablet: isTablet,
-                            onOpenVision: () => _openRoute(VisionScreen.routeName),
-                            onOpenNutrition: () => _openRoute(NutritionScreen.routeName),
-                            onOpenSync: () => _openRoute(SyncScreen.routeName),
+                            onOpenVision:
+                                () => _handleAction(HomeAction.vision),
+                            onOpenNutrition:
+                                () => _handleAction(HomeAction.nutrition),
+                            onOpenSync: () => _handleAction(HomeAction.sync),
+                          ),
+                          const SizedBox(height: 12),
+                          _QuickArduinoAction(
+                            onQuickDispense:
+                                () => _handleAction(HomeAction.quickDispense),
                           ),
                         ],
                       ),
@@ -103,7 +126,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       bottomNavigationBar:
-          isTablet ? null : _BottomNav(onTap: _onBottomTap, selectedIndex: selectedBottomIndex),
+          isTablet
+              ? null
+              : _BottomNav(
+                onTap: _onBottomTap,
+                selectedIndex: selectedBottomIndex,
+              ),
     );
   }
 }
@@ -115,6 +143,7 @@ class _TopBar extends StatelessWidget {
     required this.onTapVision,
     required this.onTapNutrition,
     required this.onTapSync,
+    required this.onTapProfile,
   });
 
   final bool isTablet;
@@ -122,6 +151,7 @@ class _TopBar extends StatelessWidget {
   final VoidCallback onTapVision;
   final VoidCallback onTapNutrition;
   final VoidCallback onTapSync;
+  final VoidCallback onTapProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +159,7 @@ class _TopBar extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
-          color: const Color(0xFFF0EEE9).withOpacity(0.92),
+          color: const Color(0xFFF0EEE9).withValues(alpha: 0.92),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: SafeArea(
             bottom: false,
@@ -138,7 +168,7 @@ class _TopBar extends StatelessWidget {
                 const Icon(Icons.pets, color: Color(0xFF2AB6D1), size: 28),
                 const SizedBox(width: 8),
                 const Text(
-                  'PawCurate',
+                  'AppPet',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
@@ -149,22 +179,36 @@ class _TopBar extends StatelessWidget {
                 const Spacer(),
                 if (isTablet) ...[
                   _TopLink(label: 'Home', selected: true, onTap: onTapHome),
-                  _TopLink(label: 'Vision', selected: false, onTap: onTapVision),
-                  _TopLink(label: 'Nutrition', selected: false, onTap: onTapNutrition),
+                  _TopLink(
+                    label: 'Vision',
+                    selected: false,
+                    onTap: onTapVision,
+                  ),
+                  _TopLink(
+                    label: 'Nutrition',
+                    selected: false,
+                    onTap: onTapNutrition,
+                  ),
                   _TopLink(label: 'Sync', selected: false, onTap: onTapSync),
                   const SizedBox(width: 8),
                 ],
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFF2AB6D1), width: 1.8),
-                    image: const DecorationImage(
-                      image: NetworkImage(
-                        'https://lh3.googleusercontent.com/aida-public/AB6AXuAUZOpxUjjAN-11dEvwEo7l3Fm0JAUThYD9kx3FmVpptyoPAV3FJnKLeXgEI3YSMzlgI4eHXHLkfr_RyBZohik-eNLYQS7Yqtjh01I_n8ieGrshLks0TsPtnupP5lc1_hpy_zP3m_Ji5C8kzrGww8nrxjhIvABkLjzdYM56QjMDV0aM5egeYfmHNJkqD9GyiMXVxLRjseWO9MR3G7a3S8yiplj9hLtZxPRXJtBDUdEMuU-2ryupwin-GBZdjFN4f-bHXQ5Dwr1dqH28',
+                GestureDetector(
+                  onTap: onTapProfile,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFF2AB6D1),
+                        width: 1.8,
                       ),
-                      fit: BoxFit.cover,
+                      image: const DecorationImage(
+                        image: NetworkImage(
+                          'https://lh3.googleusercontent.com/aida-public/AB6AXuAUZOpxUjjAN-11dEvwEo7l3Fm0JAUThYD9kx3FmVpptyoPAV3FJnKLeXgEI3YSMzlgI4eHXHLkfr_RyBZohik-eNLYQS7Yqtjh01I_n8ieGrshLks0TsPtnupP5lc1_hpy_zP3m_Ji5C8kzrGww8nrxjhIvABkLjzdYM56QjMDV0aM5egeYfmHNJkqD9GyiMXVxLRjseWO9MR3G7a3S8yiplj9hLtZxPRXJtBDUdEMuU-2ryupwin-GBZdjFN4f-bHXQ5Dwr1dqH28',
+                        ),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -178,7 +222,11 @@ class _TopBar extends StatelessWidget {
 }
 
 class _TopLink extends StatelessWidget {
-  const _TopLink({required this.label, required this.selected, required this.onTap});
+  const _TopLink({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
   final bool selected;
@@ -220,7 +268,7 @@ class _HeroSection extends StatelessWidget {
             top: 0,
             child: _BlurCircle(
               size: isDesktop ? 200 : 150,
-              color: const Color(0xFF2AB6D1).withOpacity(0.28),
+              color: const Color(0xFF2AB6D1).withValues(alpha: 0.28),
               blur: 80,
             ),
           ),
@@ -229,7 +277,7 @@ class _HeroSection extends StatelessWidget {
             top: 55,
             child: _BlurCircle(
               size: isDesktop ? 110 : 80,
-              color: const Color(0xFFFC8837).withOpacity(0.25),
+              color: const Color(0xFFFC8837).withValues(alpha: 0.25),
               blur: 60,
             ),
           ),
@@ -289,13 +337,7 @@ class _BlurCircle extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: color,
-        boxShadow: [
-          BoxShadow(
-            color: color,
-            blurRadius: blur,
-            spreadRadius: 4,
-          ),
-        ],
+        boxShadow: [BoxShadow(color: color, blurRadius: blur, spreadRadius: 4)],
       ),
     );
   }
@@ -340,8 +382,14 @@ class _FeatureGrid extends StatelessWidget {
             spacing: cardSpacing,
             runSpacing: cardSpacing,
             children: [
-              SizedBox(width: cardWidth, child: _HealthCard(onTap: onOpenVision)),
-              SizedBox(width: cardWidth, child: _FoodCard(onTap: onOpenNutrition)),
+              SizedBox(
+                width: cardWidth,
+                child: _HealthCard(onTap: onOpenVision),
+              ),
+              SizedBox(
+                width: cardWidth,
+                child: _FoodCard(onTap: onOpenNutrition),
+              ),
               SizedBox(width: cardWidth, child: _SyncCard(onTap: onOpenSync)),
             ],
           );
@@ -353,8 +401,14 @@ class _FeatureGrid extends StatelessWidget {
           runSpacing: cardSpacing,
           children: [
             SizedBox(width: cardWidth, child: _HealthCard(onTap: onOpenVision)),
-            SizedBox(width: cardWidth, child: _FoodCard(onTap: onOpenNutrition)),
-            SizedBox(width: constraints.maxWidth, child: _SyncCard(onTap: onOpenSync)),
+            SizedBox(
+              width: cardWidth,
+              child: _FoodCard(onTap: onOpenNutrition),
+            ),
+            SizedBox(
+              width: constraints.maxWidth,
+              child: _SyncCard(onTap: onOpenSync),
+            ),
           ],
         );
       },
@@ -362,8 +416,83 @@ class _FeatureGrid extends StatelessWidget {
   }
 }
 
+class _QuickArduinoAction extends StatelessWidget {
+  const _QuickArduinoAction({required this.onQuickDispense});
+
+  final VoidCallback onQuickDispense;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFDBC8).withValues(alpha: 0.45),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFFDB885), width: 1.2),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: const BoxDecoration(
+              color: Color(0xFFFC8837),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.restaurant, color: Colors.white),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Accion Rapida Arduino',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF652C00),
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  'Dispensa una porcion ahora mismo.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Color(0xFF78461D),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: onQuickDispense,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF994700),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(999),
+              ),
+            ),
+            child: const Text(
+              'Dispensar',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _FeatureCardShell extends StatelessWidget {
-  const _FeatureCardShell({required this.child, required this.gradient, required this.onTap});
+  const _FeatureCardShell({
+    required this.child,
+    required this.gradient,
+    required this.onTap,
+  });
 
   final Widget child;
   final Gradient? gradient;
@@ -381,12 +510,17 @@ class _FeatureCardShell extends StatelessWidget {
           color: gradient == null ? const Color(0xFFFFFFFF) : null,
           gradient: gradient,
           borderRadius: BorderRadius.circular(24),
-          border: gradient == null
-              ? Border.all(color: const Color(0xFFBCC9CD).withOpacity(0.3))
-              : null,
+          border:
+              gradient == null
+                  ? Border.all(
+                    color: const Color(0xFFBCC9CD).withValues(alpha: 0.3),
+                  )
+                  : null,
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF1B1C19).withOpacity(gradient == null ? 0.08 : 0.12),
+              color: const Color(
+                0xFF1B1C19,
+              ).withValues(alpha: gradient == null ? 0.08 : 0.12),
               blurRadius: 34,
               offset: const Offset(0, 16),
             ),
@@ -419,12 +553,21 @@ class _HealthCard extends StatelessWidget {
           const SizedBox(height: 20),
           const Text(
             'Camara de Salud',
-            style: TextStyle(fontSize: 27, fontWeight: FontWeight.w800, color: Color(0xFF865228), height: 1.1),
+            style: TextStyle(
+              fontSize: 27,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF865228),
+              height: 1.1,
+            ),
           ),
           const SizedBox(height: 12),
           const Text(
             'Analiza las porciones de comida y el comportamiento alimenticio de tu mascota mediante vision artificial.',
-            style: TextStyle(fontSize: 14.5, height: 1.4, color: Color(0xFF3D494C)),
+            style: TextStyle(
+              fontSize: 14.5,
+              height: 1.4,
+              color: Color(0xFF3D494C),
+            ),
           ),
           const SizedBox(height: 24),
           const Divider(height: 1, color: Color(0xFFF0EEE9)),
@@ -463,12 +606,21 @@ class _FoodCard extends StatelessWidget {
           const SizedBox(height: 20),
           const Text(
             'Calculadora de Alimento',
-            style: TextStyle(fontSize: 27, fontWeight: FontWeight.w800, color: Color(0xFF865228), height: 1.1),
+            style: TextStyle(
+              fontSize: 27,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF865228),
+              height: 1.1,
+            ),
           ),
           const SizedBox(height: 12),
           const Text(
             'Optimiza la nutricion diaria basada en la raza, peso y nivel de actividad especifica de tu companero.',
-            style: TextStyle(fontSize: 14.5, height: 1.4, color: Color(0xFF3D494C)),
+            style: TextStyle(
+              fontSize: 14.5,
+              height: 1.4,
+              color: Color(0xFF3D494C),
+            ),
           ),
           const SizedBox(height: 24),
           const Divider(height: 1, color: Color(0xFFF0EEE9)),
@@ -511,12 +663,21 @@ class _SyncCard extends StatelessWidget {
           SizedBox(height: 20),
           Text(
             'Sincronizacion Arduino',
-            style: TextStyle(fontSize: 27, fontWeight: FontWeight.w800, color: Colors.white, height: 1.1),
+            style: TextStyle(
+              fontSize: 27,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              height: 1.1,
+            ),
           ),
           SizedBox(height: 12),
           Text(
             'Gestiona la conexion con el dispensador inteligente y programa los horarios de alimentacion.',
-            style: TextStyle(fontSize: 14.5, height: 1.4, color: Color(0xFFAAEDFF)),
+            style: TextStyle(
+              fontSize: 14.5,
+              height: 1.4,
+              color: Color(0xFFAAEDFF),
+            ),
           ),
           SizedBox(height: 24),
           Divider(height: 1, color: Colors.white24),
@@ -577,7 +738,11 @@ class _CardFooter extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(color: labelColor, fontWeight: FontWeight.w700, fontSize: 14),
+          style: TextStyle(
+            color: labelColor,
+            fontWeight: FontWeight.w700,
+            fontSize: 14,
+          ),
         ),
         const Spacer(),
         Container(
@@ -606,10 +771,10 @@ class _BottomNav extends StatelessWidget {
         child: Container(
           height: 92,
           decoration: BoxDecoration(
-            color: const Color(0xFFFBF9F4).withOpacity(0.86),
+            color: const Color(0xFFFBF9F4).withValues(alpha: 0.86),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF1B1C19).withOpacity(0.06),
+                color: const Color(0xFF1B1C19).withValues(alpha: 0.06),
                 blurRadius: 30,
                 offset: const Offset(0, -8),
               ),
@@ -676,7 +841,10 @@ class _BottomItem extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(30)),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(30),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
