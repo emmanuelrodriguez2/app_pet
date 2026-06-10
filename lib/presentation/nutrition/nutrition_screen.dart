@@ -15,19 +15,34 @@ class NutritionScreen extends StatefulWidget {
 class _NutritionScreenState extends State<NutritionScreen> {
   final weightController = TextEditingController();
 
-  LifeStage selectedLifeStage = LifeStage.adultNeutered;
+  LifeStage selectedLifeStage = LifeStage.puppyYoung;
+  LifeStage selectedAdultCondition = LifeStage.adultNeutered;
   DogSize selectedSize = DogSize.medium;
 
+  final lifeStageOptions = const [
+    LifeStage.puppyYoung,
+    LifeStage.puppyOld,
+    LifeStage.senior,
+  ];
+
+  final adultConditionOptions = const [
+    LifeStage.adultIntact,
+    LifeStage.adultNeutered,
+  ];
+
   final lifeStageLabels = const {
-    LifeStage.puppyYoung: 'Cachorro (<4 meses)',
-    LifeStage.puppyOld: 'Cachorro (>=4 meses)',
+    LifeStage.puppyYoung: 'Adulto mayor a 2 años',
+    LifeStage.puppyOld: 'Adulto mayor a 4 años',
+    LifeStage.senior: 'Senior menor a 8 años',
+  };
+
+  final adultConditionLabels = const {
     LifeStage.adultIntact: 'Adulto intacto',
     LifeStage.adultNeutered: 'Adulto esterilizado',
-    LifeStage.senior: 'Senior (>7 anos)',
   };
 
   final sizeLabels = const {
-    DogSize.small: 'Pequeno',
+    DogSize.small: 'Pequeño',
     DogSize.medium: 'Mediano',
     DogSize.large: 'Grande',
   };
@@ -47,9 +62,14 @@ class _NutritionScreenState extends State<NutritionScreen> {
       return;
     }
 
+    final calculationLifeStage =
+        selectedLifeStage == LifeStage.senior
+            ? selectedLifeStage
+            : selectedAdultCondition;
+
     final profile = DogProfile(
       weightKg: weight,
-      lifeStage: selectedLifeStage,
+      lifeStage: calculationLifeStage,
       size: selectedSize,
     );
 
@@ -68,6 +88,7 @@ class _NutritionScreenState extends State<NutritionScreen> {
       result = '''
 Tamanio: ${sizeLabels[selectedSize]}
 Edad: ${lifeStageLabels[selectedLifeStage]}
+Condición adulta: ${adultConditionLabels[selectedAdultCondition]}
 
 Calorias diarias: $kcal kcal
 Alimento: $grams g/dia
@@ -107,7 +128,9 @@ Agua: $water ml/dia
               color: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                side: BorderSide(color: const Color(0xFFBCC9CD).withOpacity(0.4)),
+                side: BorderSide(
+                  color: const Color(0xFFBCC9CD).withValues(alpha: 0.4),
+                ),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -116,7 +139,9 @@ Agua: $water ml/dia
                   children: [
                     TextField(
                       controller: weightController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       decoration: const InputDecoration(
                         labelText: 'Peso del perro (kg)',
                         border: OutlineInputBorder(),
@@ -134,12 +159,13 @@ Agua: $water ml/dia
                           setState(() => selectedSize = value);
                         }
                       },
-                      items: DogSize.values.map((size) {
-                        return DropdownMenuItem(
-                          value: size,
-                          child: Text(sizeLabels[size]!),
-                        );
-                      }).toList(),
+                      items:
+                          DogSize.values.map((size) {
+                            return DropdownMenuItem(
+                              value: size,
+                              child: Text(sizeLabels[size]!),
+                            );
+                          }).toList(),
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<LifeStage>(
@@ -153,12 +179,33 @@ Agua: $water ml/dia
                           setState(() => selectedLifeStage = value);
                         }
                       },
-                      items: LifeStage.values.map((stage) {
-                        return DropdownMenuItem(
-                          value: stage,
-                          child: Text(lifeStageLabels[stage]!),
-                        );
-                      }).toList(),
+                      items:
+                          lifeStageOptions.map((stage) {
+                            return DropdownMenuItem(
+                              value: stage,
+                              child: Text(lifeStageLabels[stage]!),
+                            );
+                          }).toList(),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<LifeStage>(
+                      value: selectedAdultCondition,
+                      decoration: const InputDecoration(
+                        labelText: 'Condición adulta',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => selectedAdultCondition = value);
+                        }
+                      },
+                      items:
+                          adultConditionOptions.map((condition) {
+                            return DropdownMenuItem(
+                              value: condition,
+                              child: Text(adultConditionLabels[condition]!),
+                            );
+                          }).toList(),
                     ),
                     const SizedBox(height: 18),
                     SizedBox(
@@ -187,7 +234,10 @@ Agua: $water ml/dia
                   color: const Color(0xFFF5F3EE),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Text(result, style: const TextStyle(fontSize: 16, height: 1.4)),
+                child: Text(
+                  result,
+                  style: const TextStyle(fontSize: 16, height: 1.4),
+                ),
               ),
             ],
           ],

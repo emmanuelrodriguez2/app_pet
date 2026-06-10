@@ -301,7 +301,7 @@ class _HeroSection extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Aqui tienes el panel curado de tu mascota.',
+                    'Aqui tienes el panel de tu mascota.',
                     style: TextStyle(
                       fontSize: 22,
                       color: Color(0xFF865228),

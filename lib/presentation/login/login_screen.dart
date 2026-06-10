@@ -33,7 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Usuario o contrasena incorrectos')),
+      const SnackBar(content: Text('Usuario o contraseña incorrectos')),
     );
   }
 
@@ -153,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             const SizedBox(height: 16),
                             const Text(
-                              'Contrasena',
+                              'Contraseña',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
