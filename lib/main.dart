@@ -1,11 +1,11 @@
-import 'package:app_pet/presentation/home/home_screen.dart';
-import 'package:app_pet/presentation/home/provider/home_provider.dart';
-import 'package:app_pet/presentation/login/login_screen.dart';
-import 'package:app_pet/presentation/nutrition/nutrition_screen.dart';
-import 'package:app_pet/presentation/profile/profile_screen.dart';
-import 'package:app_pet/presentation/splash/splash_screen.dart';
-import 'package:app_pet/presentation/sync/sync_screen.dart';
-import 'package:app_pet/presentation/vision/vision_screen.dart';
+import 'package:dog_center/presentation/home/home_screen.dart';
+import 'package:dog_center/presentation/home/provider/home_provider.dart';
+import 'package:dog_center/presentation/login/login_screen.dart';
+import 'package:dog_center/presentation/nutrition/nutrition_screen.dart';
+import 'package:dog_center/presentation/profile/profile_screen.dart';
+import 'package:dog_center/presentation/splash/splash_screen.dart';
+import 'package:dog_center/presentation/sync/sync_screen.dart';
+import 'package:dog_center/presentation/vision/vision_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

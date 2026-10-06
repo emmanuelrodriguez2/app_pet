@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 18),
                       const Text(
-                        'AppPet',
+                        'DogCenter',
                         style: TextStyle(
                           fontSize: 34,
                           fontWeight: FontWeight.w800,
@@ -292,7 +292,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 20),
                       const Text(
-                        '© 2024 APPPET • TODOS LOS DERECHOS RESERVADOS',
+                        '© 2024 DOGCENTER • TODOS LOS DERECHOS RESERVADOS',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xFF6D797D),

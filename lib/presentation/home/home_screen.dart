@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import 'package:app_pet/presentation/nutrition/nutrition_screen.dart';
-import 'package:app_pet/presentation/profile/profile_screen.dart';
-import 'package:app_pet/presentation/sync/sync_screen.dart';
-import 'package:app_pet/presentation/vision/vision_screen.dart';
+import 'package:dog_center/presentation/nutrition/nutrition_screen.dart';
+import 'package:dog_center/presentation/profile/profile_screen.dart';
+import 'package:dog_center/presentation/sync/sync_screen.dart';
+import 'package:dog_center/presentation/vision/vision_screen.dart';
 import 'package:flutter/material.dart';
 
 enum HomeAction { home, vision, nutrition, sync, profile, quickDispense }
@@ -168,7 +168,7 @@ class _TopBar extends StatelessWidget {
                 const Icon(Icons.pets, color: Color(0xFF2AB6D1), size: 28),
                 const SizedBox(width: 8),
                 const Text(
-                  'AppPet',
+                  'DogCenter',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,

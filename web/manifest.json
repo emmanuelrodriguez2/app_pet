@@ -1,6 +1,6 @@
 {
-    "name": "app_pet",
-    "short_name": "app_pet",
+    "name": "DogCenter",
+    "short_name": "DogCenter",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

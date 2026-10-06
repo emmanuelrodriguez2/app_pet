@@ -49,7 +49,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       const Expanded(
                         child: Text(
-                          'AppPet',
+                          'DogCenter',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 22,

@@ -1,4 +1,4 @@
-import 'package:app_pet/presentation/login/login_screen.dart';
+import 'package:dog_center/presentation/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
@@ -7,7 +7,7 @@ class PageOnboarding extends StatefulWidget {
   const PageOnboarding({super.key});
 
   @override
-  _PageOnboardingState createState() => _PageOnboardingState();
+  State<PageOnboarding> createState() => _PageOnboardingState();
 }
 
 class _PageOnboardingState extends State<PageOnboarding> {

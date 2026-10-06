@@ -1,5 +1,5 @@
-import 'package:app_pet/domain/model/dog_profile.dart';
-import 'package:app_pet/presentation/home/provider/home_provider.dart';
+import 'package:dog_center/domain/model/dog_profile.dart';
+import 'package:dog_center/presentation/home/provider/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

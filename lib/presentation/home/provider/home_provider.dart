@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:app_pet/domain/model/dog_profile.dart';
+import 'package:dog_center/domain/model/dog_profile.dart';
 import 'package:flutter/foundation.dart';
 
 class DogFoodCalculatorProvider extends ChangeNotifier {

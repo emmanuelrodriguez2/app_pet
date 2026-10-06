@@ -1,4 +1,5 @@
-import 'package:app_pet/presentation/sync/services/roblex_wifi_client.dart';
+import 'package:dog_center/presentation/sync/bluetooth_robot_panel.dart';
+import 'package:dog_center/presentation/sync/services/roblex_wifi_client.dart';
 import 'package:flutter/material.dart';
 
 class SyncScreen extends StatefulWidget {
@@ -52,7 +53,30 @@ class _SyncScreenState extends State<SyncScreen> {
     return parsed.clamp(1, 500);
   }
 
+  bool _validateWifiHost() {
+    final host = _ipController.text.trim();
+    final isBluetoothMac = RegExp(
+      r'^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$',
+    ).hasMatch(host);
+
+    if (isBluetoothMac) {
+      _toast(
+        '00:4B:12:3E:21:5A es una direccion Bluetooth. '
+        'Conecta Orion desde el panel BLE de arriba.',
+      );
+      return false;
+    }
+
+    if (host.isEmpty) {
+      _toast('Escribe una IP WiFi, por ejemplo 192.168.4.1');
+      return false;
+    }
+
+    return true;
+  }
+
   Future<void> _testConnection() async {
+    if (!_validateWifiHost()) return;
     setState(() => _loading = true);
     try {
       final ok = await _client.testConnection(_ipController.text);
@@ -230,6 +254,8 @@ class _SyncScreenState extends State<SyncScreen> {
               ),
             ),
             const SizedBox(height: 16),
+            const BluetoothRobotPanel(),
+            const SizedBox(height: 12),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(14),
@@ -237,7 +263,7 @@ class _SyncScreenState extends State<SyncScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Conexion WiFi',
+                      'Conexion WiFi / HTTP (solo IP)',
                       style: TextStyle(fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 10),

@@ -1,3 +1,3 @@
-# app_pet
+# DogCenter
 
 A new Flutter project.
